@@ -1,5 +1,3 @@
---!optimize 2
-
 ------------------------------------------------------------
 -- OSGL v1.5b - Open-Source-Graphical-Library
 -- Copyright © 2023-2025 Gunshot Sound Studios (@saaawdust)
@@ -23,12 +21,24 @@
 --
 ------------------------------------------------------------
 
-local utils = {}
-utils.VALID_TEXTURE_VERSIONS = { "1.5b" }
-utils.VALID_FONT_VERSIONS = { "1.5b" }
+local AlphaBlendMode = {
+    Overwrite = 0 :: AlphaBlendMode,
+    Additive = 1 :: AlphaBlendMode,
+}
 
-function utils.lerp(n1: number, n2: number, factor: number): number
-    return math.floor((1 - factor) * n1 + factor * n2)
-end
+local DrawingMode = {
+    Overwrite = 0 :: DrawingMode,
+    Write = 1 :: DrawingMode,
+}
 
-return utils
+local enums = {
+    AlphaBlendMode = AlphaBlendMode :: typeof(AlphaBlendMode),
+    DrawingMode = DrawingMode :: typeof(DrawingMode),
+}
+
+export type AlphaBlendMode = number
+export type DrawingMode = number
+export type OEnum = typeof(enums)
+
+
+return enums
