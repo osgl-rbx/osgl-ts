@@ -56,3 +56,11 @@ export interface FlagTexture {
     height: number,
     pixels: PixelFlag[],
 }
+
+export type Glyph = (number | buffer | number[])[];
+export type Glyphs = { [key: string]: Glyph };
+
+export type StoredFont = {
+	version: string;
+	letters: Glyphs;
+};

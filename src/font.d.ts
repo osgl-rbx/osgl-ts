@@ -1,12 +1,4 @@
-import { Color, DrawableObject } from "./types";
-
-export type Glyph = (number | buffer | number[])[];
-export type Glyphs = { [key: string]: Glyph };
-
-export type StoredFont = {
-	version: string;
-	letters: Glyphs;
-};
+import { Color, DrawableObject, Glyphs, StoredFont } from "./types";
 
 export class FontObject {
 	glyphs: Glyphs;
