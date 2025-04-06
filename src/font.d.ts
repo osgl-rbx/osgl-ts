@@ -7,7 +7,7 @@ export class FontObject {
     linePadding: number;
 
     Draw: <T>(
-        self: FontObject,
+        this: FontObject,
         object: DrawableObject<T>,
         text: string,
         x: number,
@@ -18,7 +18,7 @@ export class FontObject {
 
 declare const Font: {
     Draw<T>(
-        self: Font,
+        this: Font,
         object: DrawableObject<T>,
         text: string,
         x: number,
