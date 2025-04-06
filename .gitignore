@@ -3,3 +3,4 @@
 /include
 *.tsbuildinfo
 *.tgz
+package-lock.json
