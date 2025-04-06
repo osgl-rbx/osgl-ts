@@ -19,4 +19,8 @@ declare namespace oEnum {
     export enum FontError {
         BadInput = 7,
     }
+
+    export type Enum = typeof oEnum;
 }
+
+export = oEnum;

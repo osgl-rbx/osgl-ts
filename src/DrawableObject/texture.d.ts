@@ -1,3 +1,4 @@
+import oEnum from "../enum";
 import { Result } from "../result";
 import { BaseUnloadedTexture, DrawableObject, RawTexture } from "../types";
 
