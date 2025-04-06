@@ -13,24 +13,18 @@
 -- Full license available in the LICENSE file
 ------------------------------------------------------------
 
-local Pixel = require(script.pixel)
-local Line = require(script.line)
-local Rect = require(script.rect)
-local Polygon = require(script.polygon)
-local Triangle = require(script.triangle)
-local Circle = require(script.circle)
-local Buffer = require(script.buffer)
+local util = {}
+util.VALID_TEXTURE_VERSIONS = { "1.5b", "1.6b" }
+util.VALID_FONT_VERSIONS = { "1.5b", "1.6b" }
 
-local Clear = require(script.clear)
+function util.getRendererProp(object: Instance): string
+	if object:IsA("ImageLabel") or object:IsA("ImageButton") then
+		return "ImageContent"
+	elseif object:IsA("Texture") or object:IsA("Decal") then
+		return "TextureContent"
+	end
 
-return {
-    Pixel = Pixel,
-    Line = Line,
-    Rectangle = Rect,
-    Polygon = Polygon,
-    Triangle = Triangle,
-    Circle = Circle,
-    Buffer = Buffer,
+	return ""
+end
 
-    Clear = Clear,
-}
+return util

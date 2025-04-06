@@ -1,8 +1,9 @@
 import { Color } from "./types";
 
 declare const color: {
-    new: (r: number | undefined, g: number | undefined, b: number | undefined, a: number | undefined) => Color
-    newRGB: (r: number | undefined, g: number | undefined, b: number | undefined) => Color
+    new: (r?: number, g?: number, b?: number, a?: number) => Color
+    newRGB: (r?: number | undefined, g?: number | undefined, b?: number | undefined) => Color
+    fromColor3: (color3: Color3) => Color,
 
     setR: (c: Color, r: number) => Color
     setG: (c: Color, g: number) => Color

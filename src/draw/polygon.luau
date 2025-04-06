@@ -2,26 +2,18 @@
 --!native
 
 ------------------------------------------------------------
--- OSGL v1.5b - Open-Source-Graphical-Library
--- Copyright © 2023-2025 Gunshot Sound Studios (@saaawdust)
+-- OSGL v1.6b - Open-Source Graphical Library
+-- Created/maintained by @saaawdust and contributors
 --
--- This software is provided ‘as-is’, without any express or implied warranty.
--- In no event will the authors be held liable for any damages arising from the use of this software.
+-- Free to use, modify and distribute in your projects (including commercial games ;3)
+-- Credit appreciated but not required
 --
--- Permission is granted to anyone to use this software for any purpose,
--- including commercial applications, and to alter it and redistribute it freely,
--- subject to the following restrictions:
+-- Do NOT:
+-- - Repackage and sell OSGL directly
+-- - Claim you created the core library
 --
--- 1. The origin of this software must not be misrepresented;
---    you must not claim that you wrote the original software.
---    If you use this software in a product, an acknowledgment
---    in the product documentation would be appreciated but is not required.
---
--- 2. Altered source versions must be plainly marked as such,
---    and must not be misrepresented as being the original software.
---
--- 3. This notice may not be removed or altered from any source distribution.
---
+-- By using OSGL, you agree to these terms.
+-- Full license available in the LICENSE file
 ------------------------------------------------------------
 
 local OSGL = script.Parent.Parent
@@ -30,21 +22,18 @@ local types = require(OSGL.types)
 local color = require(OSGL.color)
 local pixel = require(draw.pixel)
 local line = require(draw.line)
-local mode = require(draw.mode)
 
 return function<T>(object: types.DrawableObject<T>, corners: { { number } }, fill: types.Color, strokeColor: types.Color?, strokeWidth: number?)
 	-- [saaawdust]: These are temporary, cause
 	-- if I calculate it, it takes up
 	-- like 10FPS
 
-    local pixel = mode.drawPixel
-
     fill = fill or color.BLACK
     strokeColor = strokeColor or color.TRANSPARENT
     strokeWidth = strokeWidth or 1
 
-	local sizeX = object.sizeX
-	local maxY = object.sizeY
+	local sizeX = object.width
+	local maxY = object.height
 
     if strokeColor ~= color.TRANSPARENT and strokeWidth > 0 then
         for i = 1, #corners do

@@ -16,19 +16,24 @@
 -- Full license available in the LICENSE file
 ------------------------------------------------------------
 
-local OSGL = script.Parent.Parent
-local draw = OSGL.draw
+local Draw = script.Parent
+local OSGL = Draw.Parent
 local types = require(OSGL.types)
-local pixel = require(draw.pixel)
+local color = require(OSGL.color)
 
-return function<T>(object: types.DrawableObject<T>, bfr: buffer, width: number, height: number, x: number, y: number)
-    for i = 0, width - 1 do
-        local pixelX = x + i
-        for j = 0, height - 1 do
-            local pixelY = y + j
+return function<T>(self: types.DrawableObject<T>, Color: types.Color)
+    local bufferLength = buffer.len(self.buffer)
+	local current_size = 4
+	local numCopies = math.ceil(math.log(bufferLength / 4, 2))
 
-            local col = buffer.readu32(bfr, (y * width + x) * 4)
-            pixel(object, pixelX, pixelY, col)
-        end
-    end
+	buffer.writeu32(self.buffer, 0, Color or color.TRANSPARENT)
+
+	for _ = 1, numCopies do
+		local copy_size = math.min(current_size, bufferLength - current_size)
+		buffer.copy(self.buffer, current_size, self.buffer, 0, copy_size)
+
+		current_size += copy_size
+	end
+
+	return self
 end

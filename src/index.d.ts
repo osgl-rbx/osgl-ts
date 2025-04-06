@@ -1,16 +1,14 @@
-import * as types from "./types";
-import { color } from "./color";
-import { draw } from "./draw";
-import { Window, Texture } from "./drawableObject";
+import { Window, Texture, Bitmap } from "./drawableObject";
 import { Font } from "./font";
+import { color } from "./color";
 
 declare module "OSGL" {
     export {
         Window,
         Texture,
-        color,
-        types,
-        draw,
+        Bitmap,
         Font,
+        
+        color,
     }
 }

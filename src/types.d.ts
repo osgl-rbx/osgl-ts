@@ -1,60 +1,136 @@
-export type Color = number;
-type Image = ImageLabel | ImageButton
+import { DrawableObjectError } from "./enum";
+import { Result } from "./result";
 
-export interface WindowConfiguration {
-    sizeX: number | undefined,
-    sizeY: number | undefined,
-}
+type ImageBase = ImageLabel | ImageButton;
+type TextureBase = Texture | Decal;
+type Drawable = ImageBase | TextureBase | MeshPart;
+type Color = number;
 
-export class DrawableObject<T> {
-    buffer: buffer;
-    sizeX: number;
-    sizeY: number;
-    size: Vector2;
-
-    Draw: (this: DrawableObject<T>) => DrawingContext<T>;
-    ReadPixel: (this: DrawableObject<T>, x: number, y: number) => Color;
-    TintRegion: (this: DrawableObject<T>, tint: Color, factor: number, x: number, y: number, width: number, height: number) =>  T;
-    Serialize: (this: DrawableObject<T>) => [buffer, number, number];
-}
-
-export class Window extends DrawableObject<Window> {
-    editableImage: EditableImage;
-    targetFPS: number;
-    lastRenderTime: number;
-    renderers: Image[];
-
-    Render: (this: Window) => Window;
-    Clear: (this: Window, color: Color) => Window;
-    Resize: (this: Window, newWidth: number, newHeight: number) => Window;
-
-    WritePixel: (this: Window, x: number, y: number, color: Color) => Window;
-
-    AddRenderer: (this: Window, ...renderers: Image[]) => Window;
-    RemoveRenderer: (this: Window, ...renderers: Image[]) => Window;
-
-    Deserialize: (this: Window, bfr: buffer, width: number, height: number) => Window;
-
-    GetRelativeMouseToRenderer: (this: Window, image: Image[]) => [boolean, number, number]
-}
-
-export class DrawingContext<V> {
-    Pixel: (this: DrawingContext<V>, x: number, y: number, color: Color) => DrawingContext<V>;
-    Line: (this: DrawingContext<V>, startX: number, startY: number, stopX: number, stopY: number, thickness: number, color: Color) => DrawingContext<V>;
-    Rectangle: (this: DrawingContext<V>, xPos: number, yPos: number, width: number, height: number, fill: number | undefined, stroke: number | undefined, strokeThickness: number | undefined, rotation: number | undefined) => DrawingContext<V>;
-    Circle: (this: DrawingContext<V>, centerX: number, centerY: number, radius: number, fill: number | undefined, stroke: number | undefined, strokeThickness: number | undefined, rotation: number | undefined) => DrawingContext<V>;
-    Triangle: (this: DrawingContext<V>, x1: number, y1: number, x2: number, y2: number, x3: number, y3: number, fill: number | undefined, stroke: number | undefined, strokeThickness: number | undefined) => DrawingContext<V>;
-    Polygon: (this: DrawingContext<V>, corners: number[][], fill: Color) => DrawingContext<V>;
-    FloodFill: (this: DrawingContext<V>, x: number, y: number, fill: Color) => DrawingContext<V>;
-
-    StopDrawing: (this: DrawingContext<V>) => V;
-}
-
-type PixelFlag = number | string
-export interface FlagTexture {
+export interface DrawableObject<T> extends DrawingContext<DrawableObject<T>> {
+    buffer: buffer,
     width: number,
     height: number,
-    pixels: PixelFlag[],
+    size: Vector2,
+
+    Resize(this: DrawableObject<T>, width: number, height: number): Result<null, DrawableObjectError>;
+    Serialize(this: DrawableObject<T>): [buffer, number, number];
+    Deserialize(this: DrawableObject<T>, buffer: buffer, width: number, height: number): Result<null, DrawableObjectError>;
+    ReadPixelChecked(this: DrawableObject<T>, X: number, Y: number): Result<Color, DrawableObjectError>;
+    ReadPixelUnchecked(this: DrawableObject<T>, X: number, Y: number): Color;
+    TintRegionChecked(
+        this: DrawableObject<T>,
+        tint: Color,
+        factor: number,
+        X: number,
+        Y: number,
+        width: number,
+        height: number
+    ): Result<null, DrawableObjectError>;
+    TintRegionUnchecked(
+        this: DrawableObject<T>,
+        tint: Color,
+        factor: number,
+        X: number,
+        Y: number,
+        width: number,
+        height: number
+    ): null;
+    Tint(this: DrawableObject<T>, tint: Color, factor: number): null;
+    Resample(this: DrawableObject<T>, scale?: number): null;
+}
+
+export interface DrawingContext<T> {
+    Pixel(this: T, X: number, Y: number, Color: Color): null;
+    Line(
+        this: T,
+        X1: number,
+        Y1: number,
+        X2: number,
+        Y2: number,
+        thickness: number,
+        color?: Color
+    ): null;
+    Rectangle(
+        this: T,
+        X: number,
+        Y: number,
+        width: number,
+        height: number,
+        fill?: Color,
+        stroke?: Color,
+        strokeThickness?: number,
+        rotation?: number
+    ): null;
+    Polygon(
+        this: T,
+        corners: number[][],
+        fill: Color,
+        strokeColor?: Color,
+        strokeWidth?: number
+    ): null;
+    Triangle(
+        this: T,
+        X1: number,
+        Y1: number,
+        X2: number,
+        Y2: number,
+        X3: number,
+        Y3: number,
+        fill?: Color,
+        stroke?: Color,
+        strokeThickness?: number
+    ): null;
+    Circle(
+        this: T,
+        centerX: number,
+        centerY: number,
+        radius: number,
+        fill?: Color,
+        stroke?: Color,
+        strokeThickness?: number,
+        rotation?: number
+    ): null;
+    Buffer(
+        this: T,
+        buffer: buffer,
+        width: number,
+        height: number,
+        X: number,
+        Y: number
+    ): null;
+    Clear(this: T, Color?: Color): null;
+}
+
+export interface OSGLWindow extends DrawableObject<OSGLWindow> {
+    surfaces: Drawable[],
+    editableImage: EditableImage,
+    targetFPS: number,
+
+    Render: (this: OSGLWindow) => null,
+    RenderTargetFPS: (this: OSGLWindow) => null,
+    AddRenderers: (this: OSGLWindow, ...renderers: Drawable[]) => null,
+    RemoveRenderers: (this: OSGLWindow, ...renderers: Drawable[]) => null,
+    GetRelativeMousePosition: (this: OSGLWindow, image: ImageBase) => [boolean, number, number],
+}
+
+export interface BaseRawTexture<T = string> {
+    version: T,
+    width: number,
+    height: number,
+    pixels: buffer,
+}
+
+export type BaseUnloadedTexture = BaseRawTexture<"1.6b">
+export type Texture = DrawableObject<Texture>
+export type RawTexture = ModuleScript | BaseUnloadedTexture
+
+export interface OSGLBitmap {
+    channels: number,
+    width: number,
+    height: number,
+    buffer: buffer,
+    Read: (this: OSGLBitmap, X: number, Y: number, channel?: number) => number,
+    Write: (this: OSGLBitmap, X: number, Y: number, channel: number, value: number) => number,
 }
 
 export type Glyph = (number | buffer | number[])[];
