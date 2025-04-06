@@ -1,59 +1,21 @@
-import { DrawableObjectError } from "./enum";
-import { Result } from "./result";
+import { Base } from "./DrawableObject/base";
+import { WindowBase } from "./DrawableObject/windowBase";
 
 type ImageBase = ImageLabel | ImageButton;
 type TextureBase = Texture | Decal;
 type Drawable = ImageBase | TextureBase | MeshPart;
 type Color = number;
 
-export interface DrawableObject<T> extends DrawingContext<DrawableObject<T>> {
+export interface DrawableObject<T> extends Base<T> {
     buffer: buffer;
     width: number;
     height: number;
     size: Vector2;
-
-    Resize(
-        this: DrawableObject<T>,
-        width: number,
-        height: number,
-    ): Result<undefined, DrawableObjectError>;
-    Serialize(this: DrawableObject<T>): [buffer, number, number];
-    Deserialize(
-        this: DrawableObject<T>,
-        buffer: buffer,
-        width: number,
-        height: number,
-    ): Result<undefined, DrawableObjectError>;
-    ReadPixelChecked(
-        this: DrawableObject<T>,
-        X: number,
-        Y: number,
-    ): Result<Color, DrawableObjectError>;
-    ReadPixelUnchecked(this: DrawableObject<T>, X: number, Y: number): Color;
-    TintRegionChecked(
-        this: DrawableObject<T>,
-        tint: Color,
-        factor: number,
-        X: number,
-        Y: number,
-        width: number,
-        height: number,
-    ): Result<undefined, DrawableObjectError>;
-    TintRegionUnchecked(
-        this: DrawableObject<T>,
-        tint: Color,
-        factor: number,
-        X: number,
-        Y: number,
-        width: number,
-        height: number,
-    ): undefined;
-    Tint(this: DrawableObject<T>, tint: Color, factor: number): undefined;
-    Resample(this: DrawableObject<T>, scale?: number): undefined;
 }
 
 export interface DrawingContext<T> {
     Pixel(this: T, X: number, Y: number, Color: Color): undefined;
+    //FIXME: pixel index
     Line(
         this: T,
         X1: number,
@@ -114,19 +76,10 @@ export interface DrawingContext<T> {
     Clear(this: T, Color?: Color): undefined;
 }
 
-export interface OSGLWindow extends DrawableObject<OSGLWindow> {
+export interface OSGLWindow extends DrawableObject<OSGLWindow>, WindowBase<OSGLWindow> {
     surfaces: Drawable[];
     editableImage: EditableImage;
     targetFPS: number;
-
-    Render: (this: OSGLWindow) => undefined;
-    RenderTargetFPS: (this: OSGLWindow) => undefined;
-    AddRenderers: (this: OSGLWindow, ...renderers: Drawable[]) => undefined;
-    RemoveRenderers: (this: OSGLWindow, ...renderers: Drawable[]) => undefined;
-    GetRelativeMousePosition: (
-        this: OSGLWindow,
-        image: ImageBase,
-    ) => [boolean, number, number];
 }
 
 export interface BaseRawTexture<T = string> {
@@ -161,4 +114,32 @@ export type Glyphs = { [key: string]: Glyph };
 export type StoredFont = {
     version: string;
     letters: Glyphs;
+};
+
+export type OSGLVideo = {
+    width: number;
+    height: number;
+    playbackFrame: number;
+    frameRate: number;
+    playing: boolean;
+    loop: boolean;
+    frames: buffer[];
+
+    PlaySync: (
+        this: OSGLVideo,
+        callback: (width: number, height: number, buffer: buffer) => undefined,
+    ) => OSGLVideo;
+
+    PlayAsync: (
+        this: OSGLVideo,
+        callback: (width: number, height: number, buffer: buffer) => undefined,
+    ) => OSGLVideo;
+
+    Stop: (this: OSGLVideo) => OSGLVideo;
+
+    GetFrame: (this: OSGLVideo, frame: number) => [buffer, number, number];
+    GetBufferOfFrame: (this: OSGLVideo, frame: number) => buffer;
+
+    Previous: (this: OSGLVideo) => OSGLVideo;
+    Next: (this: OSGLVideo) => OSGLVideo;
 };
