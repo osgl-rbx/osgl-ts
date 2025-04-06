@@ -4,3 +4,4 @@
 *.tsbuildinfo
 *.tgz
 package-lock.json
+osgl
