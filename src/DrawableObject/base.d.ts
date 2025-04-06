@@ -34,7 +34,7 @@ type BaseInner<T> = {
         y: number,
         width: number,
         height: number,
-    ): undefined;
+    ): Result<undefined, oEnum.DrawableObjectError>;
 
     TintRegionUnchecked(
         this: DrawableObject<T>,
@@ -51,4 +51,4 @@ type BaseInner<T> = {
     Resample(this: DrawableObject<T>, scale?: number): undefined;
 };
 
-export type Base<T> = BaseInner<T> & DrawingContext<T>;
+export type Base<T> = BaseInner<T> & DrawingContext<DrawableObject<T>>;
