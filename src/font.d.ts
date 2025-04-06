@@ -1,23 +1,23 @@
 import { Color, DrawableObject, Glyphs, StoredFont } from "./types";
 
 export class FontObject {
-	glyphs: Glyphs;
+    glyphs: Glyphs;
 
-	spacing: number;
-	linePadding: number;
+    spacing: number;
+    linePadding: number;
 
-	Draw: <T>(
-		self: FontObject,
-		object: DrawableObject<T>,
-		text: string,
-		x: number,
-		y: number,
-		color: Color,
-	) => FontObject;
+    Draw: <T>(
+        self: FontObject,
+        object: DrawableObject<T>,
+        text: string,
+        x: number,
+        y: number,
+        color: Color,
+    ) => FontObject;
 }
 
 declare const Font: {
-	Draw<T>(
+    Draw<T>(
         self: Font,
         object: DrawableObject<T>,
         text: string,
@@ -26,5 +26,5 @@ declare const Font: {
         color: Color,
     ): undefined;
 
-	from(data: StoredFont): Font;
+    from(data: StoredFont): Font;
 };
