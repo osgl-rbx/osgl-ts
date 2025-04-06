@@ -14,11 +14,17 @@ if (Test-Path $OSGL_SRC_DIR) {
     Copy-Item -Path "$OSGL_SRC_DIR\*" -Destination $SRC_DIR -Recurse -Force
 }
 
+Remove-Item -Path ".\out" -Recurse -Force
+
 npm run build
 npm pack
 
-Get-ChildItem -Path $SRC_DIR -Recurse
-    | Where-Object { $_.Extension -ne ".ts" }
-    | Remove-Item -Force -Recurse
+Get-ChildItem -Path $SRC_DIR -Recurse |
+    Where-Object { $_.Extension -eq ".luau" -or $_.Extension -eq ".toml" } |
+    Remove-Item -Force
+
+Get-ChildItem -Path $SRC_DIR -Recurse -Directory |
+    Where-Object { !(Get-ChildItem -Path $_.FullName -Recurse) } |
+    Remove-Item -Force
 
 Write-Host "Build completed."
