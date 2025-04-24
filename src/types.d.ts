@@ -15,7 +15,16 @@ export interface DrawableObject<T> extends Base<T> {
 
 export interface DrawingContext<T> {
     Pixel(this: T, X: number, Y: number, Color: Color): undefined;
-    //FIXME: pixel index
+    PixelIndex(this: T, Index: number, Color: Color): undefined;
+    Chunk(
+        this: T,
+        Color: Color,
+        X1: number,
+        Y1: number,
+        X2: number,
+        Y2: number,
+    ): undefined;
+
     Line(
         this: T,
         X1: number,
@@ -63,7 +72,6 @@ export interface DrawingContext<T> {
         fill?: Color,
         stroke?: Color,
         strokeThickness?: number,
-        rotation?: number,
     ): undefined;
     Buffer(
         this: T,

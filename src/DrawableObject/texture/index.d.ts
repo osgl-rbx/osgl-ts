@@ -1,11 +1,15 @@
-import oEnum from "../enum";
-import { Result } from "../result";
-import { BaseUnloadedTexture, DrawableObject, RawTexture } from "../types";
+import oEnum from "../../enum";
+import { Result } from "../../result";
+import { BaseUnloadedTexture, DrawableObject, RawTexture } from "../../types";
 
 export declare const Texture: {
     fromChecked: (rawTexture: RawTexture) => Result<Texture, oEnum.TextureError>;
     fromUnchecked: (rawTexture: BaseUnloadedTexture) => Texture;
     fromAssetId: (assetId: string) => Result<Texture, oEnum.DrawableObjectError>;
+    fromCanvasDrawSaveObject: (
+        saveObject: Instance,
+        slowLoad?: boolean,
+    ) => Result<Texture, oEnum.TextureError>;
     new: (width: number, height: number, bfr?: buffer) => Texture;
 
     serializeChecked: (
